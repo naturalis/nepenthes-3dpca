@@ -2,10 +2,4 @@
 #Mirna
 
 print 'Dit is een test'
-
-
-
-
-
-
-
+print 'En werkt het al?'
