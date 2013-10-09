@@ -1,9 +1,10 @@
 #Mirna Baak
 #Nepenthes pitchers project Naturalis Internship
 #19-9-2013
-#version 04
-#last update: 2-10-2013
+#version 05
+#last update: 9-10-2013
 
+import operator
 #Function input, for inputing files. 
 def input_user():
     #name_file_dta = raw_input("dta_file: ")
@@ -35,7 +36,7 @@ def read_dta_file(name_file_dta):
             y_co_dta.append('%s'%(float(co_dta[1])))    #list y_coordinate
             z_co_dta.append('%s'%(float(co_dta[2])))    #list x_coordinate
 
-
+    
 # Read file .ply 
 def read_ply_file(name_file_ply):
     name_file_ply = name_file_ply
@@ -59,7 +60,7 @@ def read_ply_file(name_file_ply):
 
         else:
             header = header + data_line + "\n"      # lines header
-    #print header
+    print header
 
     
     x_co = []   #x coordinates list
@@ -83,7 +84,7 @@ def read_ply_file(name_file_ply):
         split_tabs = coordinates.split(' ')         # split into seperate fragments for each line
         number_columns = len(split_tabs)            # number of columns on a line
         #print number_columns
-        if number_columns == 6: #
+        if number_columns == 6: ####
             x = float(split_tabs[0])            
             y = float(split_tabs[1])
             z = float(split_tabs[2])
@@ -134,12 +135,12 @@ def read_ply_file(name_file_ply):
                     
     #f.write("%s\n%s\n%s\n%s"%(lowestPoint,highestPoint,most_leftPoint,most_rightPoint))
     
-    print 'lowestPoint',lowestPoint
-    print 'highestPoint',highestPoint
-    print 'most_leftPoint',most_leftPoint
-    print 'most_rightPoint',most_rightPoint
-    print 'min_zPoint',z_minPoint
-    print 'max_zPoint', z_maxPoint
+    #print 'lowestPoint',lowestPoint
+    #print 'highestPoint',highestPoint
+    #print 'most_leftPoint',most_leftPoint
+    #print 'most_rightPoint',most_rightPoint
+    #print 'min_zPoint',z_minPoint
+    #print 'max_zPoint', z_maxPoint
     #print x_co
     #print y_co
     #print z_co
@@ -147,9 +148,48 @@ def read_ply_file(name_file_ply):
     #print green
     #print blue
     f.close()
+    var4 = 'x'
+    width(x_co,y_co,z_co,var4)
+    var4 = 'z'
+    width(z_co,y_co,x_co,var4)
 
     landmarkco(lowestPoint,highestPoint,most_leftPoint,most_rightPoint,z_minPoint,z_maxPoint)
 
+#function for calculating the widest with
+def width(var1,var2,var3,var4):
+
+    #sorting of the lists on y (var2)
+    var1_sort_var2, var2_sort_var2,var3_sort_var2 = zip(*sorted(zip(var1,var2,var3), key = operator.itemgetter(1),reverse = True)) # sort on y
+    new_temp = []
+    width = {} #dictionary for storing the y value with the width of either x or z
+
+    for i in range(0, (len(var1))):
+        
+        if i == len(var1):      # for the last row
+            try:
+                width_var1 = (new_temp[0] - new_temp[-1])       #calculating the width
+                width.update({var2_sort_var2[i-1]:width_var1})  # adding to dictionary
+                new_temp = []                                   #clean new_temp variable
+            except:
+                break
+
+        #calculating the width for y values    
+        try:
+            #if the previous number is the same as the following number, the var1 value is stored in the new_temp list
+            if var2_sort_var2[i] == var2_sort_var2[i-1]:
+                new_temp.append(float(var1_sort_var2[i-1]))
+                new_temp.append(float(var1_sort_var2[i]))
+                new_temp = sorted(new_temp, reverse = True) # the new_temp list is sorted                 
+            else:
+                width_var1 = (new_temp[0] - new_temp[-1]) # the max width is calculated by the highest number and the lowest number.
+                width.update({var2_sort_var2[i-1]:width_var1}) # add to the dictionary with the y value of the max width
+                new_temp = [] #clear new_temp list
+        except:
+            continue
+        
+    a = max(width.iteritems(), key=operator.itemgetter(1))[0]
+    b = max(width.iteritems(), key=operator.itemgetter(1))[1]
+    print 'The max width of %s is on y value: %s width: %s'%(var4,a,b)
 
 #write landmarks coordinates to file
 def landmarkco(lowestPoint,highestPoint,most_leftPoint,most_rightPoint,z_minPoint,z_maxPoint):
