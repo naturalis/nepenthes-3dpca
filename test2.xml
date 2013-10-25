@@ -1,0 +1,17 @@
+<tool id="test2" name="test2">
+  <description>testest</description>
+
+  <command interpreter="Rscript"> test2.R $input $nb_landmarks $nb_species $main_title $output
+  </command>
+	
+  <inputs>
+    <param name="input" type="data" format="csv" label="Test data file" />
+    <param name = "nb_landmarks" size = "5" type = "integer" value = "18" label = "number of landmarks"/>
+    <param name = "nb_species" size = "5" type = "integer" value = "3" label = "number of species"/>
+    <param name = "main_title" size = "50" type = "text" value = "" label = "Titel pca plot"/>  
+  </inputs>
+
+  <outputs>
+    <data name="output" format="png" label="R script output" />
+  </outputs>
+</tool>
