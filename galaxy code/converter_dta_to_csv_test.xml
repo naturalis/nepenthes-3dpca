@@ -1,11 +1,12 @@
 <tool id="dtaConverter" name="dtaConverter">
   <description>for the input file</description>
-  <command interpreter="python">converter_dta_to_csv_test.py $input $output</command>
+  <command interpreter="python">converter_dta_to_csv_test.py $input $output $output2</command>
   <inputs>
     <param format="dta" name="input" type="data" label="Source file"/>
   </inputs>
   <outputs>
     <data format="csv" name="output" />
+    <data format="csv" name="output2" />
   </outputs>
 
   

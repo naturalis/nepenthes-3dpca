@@ -12,6 +12,7 @@ import os
 #file_outputname = raw_input('Outputname: ')
 file_name = sys.argv[1]
 file_outputname = sys.argv[2]
+file_outputname2 = sys.argv[3]
 
 def convert_dta(file_name,file_outputname):
     
@@ -19,7 +20,7 @@ def convert_dta(file_name,file_outputname):
     a = len(read_file.readlines())
     read_file2 = open(file_name, 'r') # open file second time
     output = open(file_outputname,'w') #output file
-    output2 = open('%s_2.txt'%(file_outputname[:-4]), 'w')
+    output2 = open(file_outputname2, 'w')
 
     numberlandmarks = 0
     header = "" 
@@ -30,16 +31,18 @@ def convert_dta(file_name,file_outputname):
         split_tabs = b.split('  ')
         number_columns = len(split_tabs)
         if x == 0:
-            header += b       #name of sample     
+            header += b.replace(' ', '_')     #name of sample     
         if number_columns == 3: #coordinates
             output.write("%f,%f,%f\n"%(float(split_tabs[0]),float(split_tabs[1]),float(split_tabs[2])))
             numberlandmarks += 1 # number of landmarks
 
-    header += ", %s"%(str(numberlandmarks))
-    output2.write("%s"%(header)) # writing header to output file
+    #header += ", %s"%(str(numberlandmarks))
+    output2.write("%s\n"%(header[1:-4])) # writing header to output file
 
     output.close()
     #outputname.close()
 convert_dta(file_name,file_outputname)
+            
+
             
 

@@ -1,0 +1,18 @@
+<tool id="Procrustes" name="Procrustes">
+  <description>Procrustes analysis</description>
+  <command interpreter="Rscript">Procrustes.R $input $nb_landmarks $nb_species $output</command>
+  <inputs>
+    <param name="input" type="data" format="csv" label="Mergedcsv file" />
+    <param name = "nb_landmarks" size = "5" type = "integer" value = "18" label = "number of landmarks"/>
+    <param name = "nb_species" size = "5" type = "integer" value = "3" label = "number of species"/>
+  </inputs>
+  <outputs>
+    <data format="csv" name="output" />
+  </outputs>
+
+  
+  <help>
+Procrustes analysis with merged csv file and output procrustes coordinates in csv format
+  </help>
+
+</tool>

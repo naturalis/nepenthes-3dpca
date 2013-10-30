@@ -1,0 +1,16 @@
+<tool id="PCA" name="PCA">
+  <description>Procrustes analysis</description>
+  <command interpreter="Rscript">PCA.R $input $output</command>
+  <inputs>
+    <param name="input" type="data" format="csv" label="Procrustes csvfile" />
+  </inputs>
+  <outputs>
+    <data format="csv" name="output" />
+  </outputs>
+
+  
+  <help>
+PCA
+  </help>
+
+</tool>
