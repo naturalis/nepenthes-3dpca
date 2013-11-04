@@ -1,23 +1,21 @@
-args <- commandArgs(TRUE)
-input <- args[1]
+# The tool PCA creates a principle component analysis on procrustes data.
+# developer: Mirna Baak
 
+#commands of commandline
+args <- commandArgs(TRUE)
+#input file: procrustes coordinates
+input <- args[1]
+#output file
 output <- args[2]
-#wil je er een plot bij?
+
+#package geomorph
 suppressMessages(library("geomorph"))
 
+#reading of coordinates
 read <- read.csv(file <- input,header = TRUE)
-
+#principle componten analysis with princomp, using covariance matrix of coordinates
 pca <- princomp(x=cov(read))
 
-pov <- pca$sdev^2/sum(pca$sdev^2)
-pca1 <- pca$scores[,1] *-1 *100
-pca2 <- pca$scores[,2] *-1 *100
-
-#png(output)
-
+#output pca scores
 write.csv(pca$scores,output, row.names = FALSE)
-#suppressMessages(plot(pca1,pca2, pch=20,cex=1))
-#title(main = main_title) #gaat iets nog niet goed, als ik losse woorden typ
-#suppressMessages(dev.copy(png, output))
-#graphics.off()
 
