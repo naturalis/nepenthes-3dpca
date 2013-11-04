@@ -1,13 +1,14 @@
 <tool id="Procrustes" name="Procrustes">
   <description>Procrustes analysis</description>
-  <command interpreter="Rscript">Procrustes.R $input $nb_landmarks $nb_species $output</command>
+  <command interpreter="Rscript">Procrustes.R $input $nb_landmarks $nb_dimension $output $outputcentroid </command>
   <inputs>
     <param name="input" type="data" format="csv" label="Mergedcsv file" />
     <param name = "nb_landmarks" size = "5" type = "integer" value = "18" label = "number of landmarks"/>
-    <param name = "nb_species" size = "5" type = "integer" value = "3" label = "number of species"/>
+    <param name = "nb_dimension" size = "5" type = "integer" value = "3" label = "number of dimensions"/>
   </inputs>
   <outputs>
-    <data format="csv" name="output" />
+    <data format="csv" name="output" label = "pca coordinates procrustes"/>
+    <data format="csv" name="outputcentroid" label = "centroid size procrustes"/>
   </outputs>
 
   
