@@ -1,6 +1,6 @@
 <tool id="plotPCACsize" name="plotPCACsize">
   <description>Plottool for pca and csize</description>
-  <command interpreter="Rscript">plotPCACsize.R $input_PCA $input_Csize $title $x_label $y_label $x_column $names $output</command>
+  <command interpreter="Rscript">plotPCACsize.R $input_PCA $input_Csize "$title" "$x_label" "$y_label" $x_column $names $output</command>
   <inputs>
     <param name="input_PCA" type="data" format="csv" label="PC" />
     <param name="input_Csize" type="data" format="csv" label="Csize procrustes" />

@@ -1,6 +1,6 @@
 <tool id="Plottool" name="Plottool">
   <description>Plottool for pca </description>
-  <command interpreter="Rscript">Plottool.R $input $title $x_label $y_label $x_column $y_column $names $output</command>
+  <command interpreter="Rscript">Plottool.R $input "$title" "$x_label" "$y_label" $x_column $y_column $names $output</command>
   <inputs>
     <param name="input" type="data" format="csv" label="PCA coordinates" />
     <param name = "title" size = "30" type = "text" value = "" label = "Main Title"/>

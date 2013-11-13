@@ -2,14 +2,11 @@
 #Mirna Baak
 #baak.mirna@gmail.com
 #9-10-2013
-#last update: 9-10-2013
+#last update: 13-11-2013
 
-
-#Hoe moet de header der in zodat die niet crashed in R, meerdere samples in 1 output krijgen. 
 import sys
 import os
-#file_name = raw_input('Name file: ')
-#file_outputname = raw_input('Outputname: ')
+
 file_name = sys.argv[1]
 file_outputname = sys.argv[2]
 file_outputname2 = sys.argv[3]
@@ -36,11 +33,10 @@ def convert_dta(file_name,file_outputname):
             output.write("%f,%f,%f\n"%(float(split_tabs[0]),float(split_tabs[1]),float(split_tabs[2])))
             numberlandmarks += 1 # number of landmarks
 
-    #header += ", %s"%(str(numberlandmarks))
     output2.write("%s\n"%(header[1:-4])) # writing header to output file
 
     output.close()
-    #outputname.close()
+
 convert_dta(file_name,file_outputname)
             
 

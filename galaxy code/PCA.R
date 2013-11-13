@@ -7,6 +7,7 @@ args <- commandArgs(TRUE)
 input <- args[1]
 #output file
 output <- args[2]
+output2 <- args[3]
 
 #package geomorph
 suppressMessages(library("geomorph"))
@@ -18,4 +19,4 @@ pca <- princomp(x=cov(read))
 
 #output pca scores
 write.csv(pca$scores,output, row.names = FALSE)
-
+write.csv(pca$sdev, output2, row.names = FALSE)

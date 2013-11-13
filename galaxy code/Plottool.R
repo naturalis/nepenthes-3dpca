@@ -35,6 +35,6 @@ maxpca2 = max(pca2) + max(pca2)
 #creating the plot with principle components and titels
 suppressMessages(plot(pca1,pca2, main = main_title, xlab = x_title, ylab = y_title, pch=20,cex=0.6, xlim = c(minpca1,maxpca1), ylim=c(minpca2,maxpca2)))
 #add labels to data points
-text(pca1,pca2,labels = read2, pos = 2, cex = 0.6, col = 'red') 
+text(pca1,pca2,labels = read2, pos = 2, cex = 0.6,col = heat.colors(5)) 
 
 graphics.off()
