@@ -1,0 +1,37 @@
+<tool id="dtaConverter3" name="dtaConverter3">
+  <description>convert multiple dta files to one csv file</description>
+  <command interpreter="python">
+    converter.py
+    --output $output
+    --output2 $output2
+    
+    #for $input in $inputs:
+    --input_file '$input'
+    --input_name '$input.display_name'
+    #end for
+  </command>
+  <inputs>
+    <param name="inputs" type="data" multiple="true" label="Inputs" />
+    
+  </inputs>
+  <outputs>
+    <data format="csv" name="output" label="Convertion of ${on_string}" />
+    <data format = "csv" name = "output2" label = "sample_names" />
+  </outputs>
+  <help>
+	**What it does**
+
+	This tool can convert multiple .dta files to one .csv file with coordinates and one .csv file with names of the samples.
+
+	Press the button 'Add new Dataset' to add more .dta files. 
+
+	**Input file**
+
+	.dta file created by:
+
+	Created by Landmark. http://graphics.idav.ucdavis.edu/research/EvoMorph
+
+
+
+  </help>
+</tool>
