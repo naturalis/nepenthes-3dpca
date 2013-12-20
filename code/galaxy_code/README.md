@@ -34,8 +34,8 @@ barplot:
 Galaxy
 ------
 
-Install galaxy  (http://galaxyproject.org/)
-Put the tools (the .xml and .R or .py)  in the directory galaxy-dist/tools 
+Install galaxy  (http://galaxyproject.org/).
+Put the tools (the .xml and .R or .py)  in the directory galaxy-dist/tools. 
 Make Galaxy aware of the new tool in the tool_conf.xml file
 
 
@@ -45,8 +45,8 @@ Install python 2.7 to use the tools (http://www.python.org/)
 
 R
 -
-Install R to use the tools (http://www.r-project.org/)
-Install also the package 'geomorph' (http://cran.r-project.org/web/packages/geomorph/)
+Install R to use the tools (http://www.r-project.org/).
+Install also the package 'geomorph' (http://cran.r-project.org/web/packages/geomorph/).
 
 
 
