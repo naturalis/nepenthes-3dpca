@@ -1,14 +1,19 @@
-#rotation 
+#rotation version 2
 
 import math
 from math import *
+import sys
 #file_name = raw_input("file: ")
-file_name = 'dart_landmark.dta'
+file_name = 'curvation_lower.dta'
+
 #file_connect = raw_input("file: ")
-file_connect= 'mirror2.txt'
+file_connect= 'mirror.txt'
+#file_name = 'dart_landmark2.dta'
+#file_connect = raw_input("file: ")
+#file_connect= 'mirror2.txt'
 
 #maken dat die connect file onthoud. 
-import sys
+
 file_outputname = 'outputrotate.dta'
 file_outputname2 = 'outputrotate2.dta'
 file_outputname3 = 'outputrotate3.dta'
@@ -20,7 +25,6 @@ output4 = open(file_outputname4, 'w')
 
 datapoints = open(file_name)
 datalines = datapoints.readlines()
-#print datalines
 listdata = []
 listdta = []
 sublistje = []
@@ -28,10 +32,8 @@ sublistje = []
 # open dta file
 for a  in range(0,len(datalines)):
     aline = datalines[a].strip()
+    listdta.append(datalines[a].strip().split('  ')) # let op spatie
 
-    listdta.append(datalines[a].strip().split(' ')) # let op spatie
-    #print listdta
-    #print len(listdta[a])
     if len(listdta[a]) == 3:
         sublistje.append(float(listdta[a][0]))
         sublistje.append(float(listdta[a][1]))
@@ -56,17 +58,18 @@ for x in range(0, len(lines)):
     if line == 'mirror':
         for y in range(x + 1,len(lines)):
             listje.append(lines[y].strip().split())
-#print listjesym
+#print 'sym', listjesym
 
 
-
+sym1 = int(listjesym[0][0]) -1
+sym2 = int(listjesym[1][0]) -1 
+sym3 = int(listjesym[2][0]) -1
 
 
 #shift to zeropoint ##########################################################
 
-zeropoint = int(listjesym[2][0])
-
-co_zeropoint = listdata[zeropoint -1]
+zeropoint = int(sym3)
+co_zeropoint = listdata[zeropoint]
 
 listdata2 = []
 listdata3 = []
@@ -87,83 +90,109 @@ output.close()
 # Rotate around z axis ########################################################################
 
 
-def R2(angle): # Rz rotation matrix
-    return [[cos(math.radians(angle)), -sin(math.radians(angle)), 0.0],[sin(math.radians(angle)),cos(math.radians(angle)),0.0],[0.0, 0.0, 1.0]]
+def Rz_matrix(z_angle): # Rz rotation matrix
+    return [[cos(math.radians(z_angle)), -sin(math.radians(z_angle)), 0.0],[sin(math.radians(z_angle)),cos(math.radians(z_angle)),0.0],[0.0, 0.0, 1.0]]
 
-def Rotate2(point2, angle2): # multiplication rotation matrix and coordinates 
-    r_2 = R2(angle)
+def Z_rotation(point2, z_angle): # multiplication rotation matrix and coordinates 
+    r_z = Rz_matrix(z_angle)
     #print 'm', r_2
-    rotated2 = []
-    '''for points in range(0,):#len(listdata3)
-        print points
-        for i in range(0,3):
-            ax = r_2[i][0] * listdata3[points][0]
-            by = r_2[i][1] * listdata3[points][1]
-            cz = r_2[i][2] * listdata3[points][2]
-            #print 'ax',ax
-            #print 'by', by
-            #print 'cz',cz
-            totalx = ax + by + cz
-            #print 'total', totalx
-            #print '\n
-            '''
-               
+    rotated_z = []               
     for i in range(3):
-        rotated2.append((sum([r_2[i][j] * point2[j] for j in range(3)])))
-    return rotated2
+        rotated_z.append((sum([r_z[i][j] * point2[j] for j in range(3)])))
+    return rotated_z
 
 # calculate angle rotation
-len_a = abs(listdata3[0][0] - listdata3[4][0])
-len_b = abs(listdata3[0][1] - listdata3[4][1])
+len_z_a = listdata3[int(sym1)][0] - listdata3[int(sym3)][0]
+len_z_b = listdata3[int(sym1)][1] - listdata3[int(sym3)][1]
 
-angle = -(math.degrees(math.atan(len_a/len_b)))
-print angle
+z_angle = (math.degrees(math.atan(len_z_a/len_z_b)))
+print 'angle1',z_angle
 
 # calculate new coordinates
-listdata5 = []
+listdata4 = []
 
-for d in range(0, len(listdata3)):
+for coordinates in range(0, len(listdata3)):
     #print 'r', Rotate2(listdata3[d], angle)
-    listdata5.append(Rotate2(listdata3[d], angle))
-print 'list5', listdata5
+    listdata4.append(Z_rotation(listdata3[coordinates], z_angle))
+print 'list4', listdata4
 
 for x in range(0,len(listdata)):
-    output2.write("%s %s %s\n"%(listdata5[x][0], listdata5[x][1], listdata5[x][2]))
+    output2.write("%s %s %s\n"%(listdata4[x][0], listdata4[x][1], listdata4[x][2]))
 
 output2.close()
-
+###########################################################################################################################
 # around x-axis #######################################################
 
-def R3(angle3): #rotation matrix x-axis
-    return [[1, 0, 0],[0,cos(math.radians(angle3)),-sin(math.radians(angle3))],[0,sin(math.radians(angle3)),cos(math.radians(angle3))]]
+def Rx_matrix(x_angle): #rotation matrix x-axis
+    #print cos(math.radians(x_angle))
+    return [[1, 0, 0],[0,cos(math.radians(x_angle)),-sin(math.radians(x_angle))],[0,sin(math.radians(x_angle)),cos(math.radians(x_angle))]]
 
-def Rotate3(point3, angle3): #multiplication rotation matrix and coordinates 
-    r_3 = R3(angle3)
-    rotated3 = []
+def X_rotation(point3, x_angle): #multiplication rotation matrix and coordinates 
+    r_x = Rx_matrix(x_angle)
+    #print r_x
+    rotated_x = []
+    for points in range(0,2):#len(listdata3)
+        #print points
+        for i in range(0,3):
+            ax = r_x[i][0] * listdata4[points][0]
+            by = r_x[i][1] * listdata4[points][1]
+            cz = r_x[i][2] * listdata4[points][2]
+            totalx = ax + by + cz
+            #print 'total', totalx
+            #print '\n'
+            
     for i in range(3):
-        rotated3.append((sum([r_3[i][j] * point3[j] for j in range(3)])))
+        rotated_x.append((sum([r_x[i][j] * point3[j] for j in range(3)])))
         #round weggehaald
-    return rotated3
+    return rotated_x
 
-#calculate angle
-len_a3 = listdata5[0][2] - listdata5[4][0]
-len_b3 = listdata5[0][1] - listdata5[4][0]
-angle3 = -(math.degrees(math.atan(len_a3/len_b3)))
-print angle
-listdata7 = []
+#calculate angle point 13z / point 13y int(sym1)][0]
+len_x_a = listdata4[int(sym1)][2] - listdata4[int(sym3)][0]
+len_x_b = listdata4[int(sym1)][1] - listdata4[int(sym3)][0]
+x_angle = -(math.degrees(math.atan(len_x_a/len_x_b))) # waarom hier een min voor?
+print 'angle2', x_angle
+listdata5 = []
 
 # new coordinates in list
 for d in range(0, len(listdata3)):
-    print 's', Rotate3(listdata5[d], angle3)
-    listdata7.append(Rotate3(listdata5[d], angle3))
+    #print 's', X_rotation(listdata4[d], x_angle)
+    listdata5.append(X_rotation(listdata4[d], x_angle))
 
-print 'listdata7', listdata7
+print 'listdata5', listdata5
 # write new coordinates
 for x in range(0,len(listdata)):
-    output4.write("%s %s %s\n"%(listdata7[x][0], listdata7[x][1], listdata7[x][2]))
+    output3.write("%s %s %s\n"%(listdata5[x][0], listdata5[x][1], listdata5[x][2]))
 
 
-###############################################################
+# Rotate around y axis#############################################################
+def Ry_matrix(y_angle): # Ry rotation matrix
+    return [[cos(math.radians(y_angle)), 0.0, sin(math.radians(y_angle))],[0.0, 1.0, 0.0],[-sin(math.radians(y_angle)),0.0, cos(math.radians(y_angle))]]
+
+def Y_rotation(point4, y_angle): #multiplication rotation matrix and coordinates 
+    r_y = Ry_matrix(y_angle)
+    print r_y
+    rotated_y = []
+    for i in range(3):
+        rotated_y.append((sum([r_y[i][j] * point4[j] for j in range(3)])))
+        #round weggehaald
+    return rotated_y
+
+#calculate angle 4 x coordinate point 3 / z coordinate point 3.
+len_y_a = (listdata5[int(sym2)][0] - listdata5[int(sym3)][0])
+len_y_b = (listdata5[int(sym2)][2] - listdata5[int(sym3)][2])
+y_angle = -(math.degrees(math.atan(len_y_a/len_y_b)))
+print 'angle3', y_angle
+listdata6 = []
+
+# new coordinates in list
+for d in range(0, len(listdata5)):
+    print 's', Y_rotation(listdata5[d], y_angle)
+    listdata6.append(Y_rotation(listdata5[d], y_angle))
+
+print 'listdata6', listdata6
+# write new coordinates
+for x in range(0,len(listdata5)):
+    output4.write("%s %s %s\n"%(listdata6[x][0], listdata6[x][1], listdata6[x][2]))
     
 '''
 marge = 300 ####### hoe zouden we hier een getal voor kunnen nemen?
@@ -199,109 +228,9 @@ datapoints.close()
 mirrorpoints.close()
 
 
-def R(theta, u):
-    return [[cos(theta) + u[0]**2 * (1-cos(theta)), 
-             u[0] * u[1] * (1-cos(theta)) - u[2] * sin(theta), 
-             u[0] * u[2] * (1 - cos(theta)) + u[1] * sin(theta)],
-            [u[0] * u[1] * (1-cos(theta)) - u[2] * sin(theta),
-             cos(theta) + u[1]**2 * (1-cos(theta)),
-             u[1] * u[2] * (1 - cos(theta)) + u[0] * sin(theta)],
-            [u[0] * u[2] * (1-cos(theta)) - u[1] * sin(theta),
-             u[1] * u[2] * (1-cos(theta)) - u[0] * sin(theta),
-             cos(theta) + u[2]**2 * (1-cos(theta))]]
 
-def Rotate(pointToRotate, point1, point2, theta):
-
-
-    u= []
-    squaredSum = 0
-    for i,f in zip(point1, point2):
-        u.append(f-i)
-        print u
-        squaredSum += (f-i) **2
-        print squaredSum
-    u = [i/squaredSum for i in u]#????
-    print u
-    r = R(theta, u)
-    rotated = []
-
-    for i in range(3):
-        print 'j', (sum([r[j][i] for j in range(3)]))
-        rotated.append(round(sum([r[j][i] * pointToRotate[j] for j in range(3)])))
-        print rotated
-
-    return rotated
-
-
-point = [1,0,0]
-p1 = [0,0,0]
-p2 = [0,1,0]
-
-
-print Rotate(point, p1, p2, pi) # [-1.0, 0.0, 0.0]
-
-##########################################
-def R(theta, u):
-    return [[cos(theta) + u[0]**2 * (1-cos(theta)), 
-             u[0] * u[1] * (1-cos(theta)) - u[2] * sin(theta), 
-             u[0] * u[2] * (1 - cos(theta)) + u[1] * sin(theta)],
-            [u[0] * u[1] * (1-cos(theta)) - u[2] * sin(theta),
-             cos(theta) + u[1]**2 * (1-cos(theta)),
-             u[1] * u[2] * (1 - cos(theta)) + u[0] * sin(theta)],
-            [u[0] * u[2] * (1-cos(theta)) - u[1] * sin(theta),
-             u[1] * u[2] * (1-cos(theta)) - u[0] * sin(theta),
-             cos(theta) + u[2]**2 * (1-cos(theta))]]
-
-def Rotate(pointToRotate, point1, point2, theta):
-    u= []
-    squaredSum = 0
-    for i,f in zip(point1, point2):
-        u.append(f-i)
-        #print u
-        squaredSum += (f-i) **2
-        #print squaredSum
-    u = [i/squaredSum for i in u]#????
-    #print u
-    r = R(theta, u)
-    #print r
-    rotated = []
-
-    for i in range(3):
-        #print 'j', (sum([r[j][i] for j in range(3)]))
-        rotated.append((sum([r[j][i] * pointToRotate[j] for j in range(3)])))
-        #round weggehaald
-
-    return rotated
-
-p1 = [0,0,0]
-p2 = [0,10,0]
-print p1, p2
-listdata6 = []
-len_a = abs(listdata3[0][0] - listdata3[4][0])
-print len_a
-
-
-len_b = abs(listdata3[0][1] - listdata3[4][1])
-print len_b
-angle = math.degrees(math.atan(len_a/len_b))
-print 'angle', angle
-angle = math.radians(angle)
-print 'angle', angle
-
-#angle = 0.045
-#print angle
-for c in range(0, len(listdata3)):
-    print 'iets'
-    #if (c + 1) == 15 or (c+1) == 13:
-        #listdata4.append((listdata3[c]))
-        #continue
-    print 'oke'
-    print Rotate(listdata3[c], p1, p2, angle) # [-1.0, 0.0, 0.0]
-    listdata6.append(Rotate(listdata3[c], p1, p2, angle))
-print 'listdata6', listdata6
-print len(listdata6)
-
-for x in range(0,len(listdata)):
-    output3.write("%s %s %s\n"%(listdata6[x][0], listdata6[x][1], listdata6[x][2]))
-##########################################################################
 '''
+output.close()
+output2.close()
+output3.close()
+output4.close()
