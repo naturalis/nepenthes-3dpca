@@ -3,8 +3,10 @@
 import math
 from math import *
 import sys
-file_name = raw_input("file: ")
-#file_name = 'curvation_lower.dta'
+import numpy
+
+#file_name = raw_input("file: ")
+file_name = 'curvation_lower.dta'
 
 #file_connect = raw_input("file: ")
 #file_connect= 'mirror.txt'
@@ -192,7 +194,7 @@ for x in range(0,len(listdata)):
     output3.write("%.7f %.7f %.7f\n"%(listdata5[x][0], listdata5[x][1], listdata5[x][2]))
 
 
-# Rotate around y axis#############################################################
+#Rotate around y axis#############################################################
 
 #calculate angle 4 x coordinate point 3 / z coordinate point 3.
 len_y_a = (listdata5[int(sym2)][0] - listdata5[int(sym3)][0])
@@ -208,8 +210,9 @@ for d in range(0, len(listdata5)):
 
 print 'listdata6', listdata6
 
+#turning when point 10 has  higher z coordinate than point 13
 listdatatemp = []
-if listdata6[sym1][2] < listdata6[sym3][1]:
+if listdata6[sym1][2] < listdata6[9][2]:
     print 'iets2'
     angle = 180
     for coordinates in range(0,len(listdata6)):
@@ -225,26 +228,41 @@ for x in range(0,len(listdata5)):
 
     
 ####################################################################################################################################################
-
-#marge = 300 ####### hoe zouden we hier een getal voor kunnen nemen?
+percentage_distance = []
 # change the wrong points
-for x in range(0,len(listje)):
-    
-    
+for x in range(0,len(listje)):  
     left = listje[x][0]
     right = listje[x][1]
-    print listdata6[int(left)-1][0]
-    marge = abs(listdata6[int(left)-1][0]/2)
-    #marge = 300
-    print 'marge', marge
     co_left = listdata6[int(left)-1]
-    print co_left
+    co_left_x = co_left[0]
     co_right = listdata6[int(right)-1]
-    print co_right
+    co_right_x = co_right[0]
     distance_x = float(co_left[0]) + float(co_right[0])
+    
+    if site == 0:
+        percentage_distance.append(abs(distance_x) / co_left_x)
+        print 'pd', percentage_distance
+    elif site == 1:
+        percentage_distance.append(abs(distance_x) / co_right_x)
+    else:
+        print 'something wrong'
     print 'distance', distance_x
+mean_percentage = numpy.mean(percentage_distance)
+t = (mean_percentage * 34.1) / 100
+left_range = mean_percentage - t
+right_range = mean_percentage + t
 
-    if distance_x > marge:
+print 'l', left_range
+print 'r', right_range
+#stdeviation = numpy.std(percentage_distance)
+#print 'p', stdeviation
+
+for x in range(0,len(listje)):
+    left = listje[x][0]
+    right = listje[x][1]
+    print 'nee'
+    if (percentage_distance[x] > right_range) or (percentage_distance[x] < left_range):
+        print 'ja'
         if site == 0:
             listdata6[int(right)-1][0] = float(co_left[0]) * -1
             listdata6[int(right)-1][1] = float(co_left[1])
@@ -253,6 +271,7 @@ for x in range(0,len(listje)):
             listdata6[int(left)-1][0] = float(co_right[0]) * -1
             listdata6[int(left)-1][1] = float(co_right[1])
             listdata6[int(left)-1][2] = float(co_right[2])
+
             
 for x in range(0,len(listdata6)):
     output5.write("%.7f %.7f %.7f\n"%(listdata6[x][0], listdata6[x][1], listdata6[x][2]))
