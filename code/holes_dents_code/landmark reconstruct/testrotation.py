@@ -237,12 +237,15 @@ for x in range(0,len(listje)):
 
 
 mean_percentage = numpy.mean(percentage_distance) #mean of percentages
-
+std_percentage = numpy.std(percentage_distance)
+print mean_percentage
+print std_percentage
 #range of correct values
-t = (mean_percentage * 34.1) / 100
-left_range = mean_percentage - t
-right_range = mean_percentage + t
 
+
+#t = (mean_percentage * 34.1) / 100 #68.2 is one standard deviation
+left_range = mean_percentage - std_percentage #left range mean minus one standard deviation
+right_range = mean_percentage + std_percentage # rigth range mean plus one standard deviation
 
 #correcting the landmarks coordinates#
 for x in range(0,len(listje)):
@@ -250,11 +253,13 @@ for x in range(0,len(listje)):
     right = listje[x][1]
     co_left = listdata6[int(left)-1]
     co_right = listdata6[int(right)-1]
-    
     #if there is to much deviation take correct coordinate and project it to the other side. 
     if (percentage_distance[x] > right_range) or (percentage_distance[x] < left_range):
+        
         #if left side is correct
         if site == 0:
+            print listdata6[int(right)-1][0]
+            print float(co_left[0])
             listdata6[int(right)-1][0] = float(co_left[0]) * -1
             listdata6[int(right)-1][1] = float(co_left[1])
             listdata6[int(right)-1][2] = float(co_left[2])
