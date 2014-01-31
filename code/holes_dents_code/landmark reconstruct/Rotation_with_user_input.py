@@ -74,7 +74,6 @@ listspec = []
 #extracting symmetry landmarks and mirror landmarks of connect file
 for x in range(0, len(lines)):
     line = lines[x].strip()
-    print line
     if line == 'sym':
         for a in range(1,4):
             listjesym.append(lines[a].strip().split())
@@ -95,11 +94,6 @@ for x in range(0, len(lines)):
     if line == 'spec':
         for b in range(x+1, len(lines)):
             listspec.append(lines[b].strip().split())
-
-print listjesym
-print listje
-print listspec
-
 
 #Symmetry points
 sym1 = int(listjesym[0][0]) -1
@@ -259,8 +253,7 @@ if len(listspec) == 0:
 
     mean_percentage = numpy.mean(percentage_distance) #mean of percentages
     std_percentage = numpy.std(percentage_distance)
-    print mean_percentage
-    print std_percentage
+    
     #range of correct values
 
 
@@ -279,8 +272,6 @@ if len(listspec) == 0:
             
             #if left side is correct
             if site == 0:
-                print listdata6[int(right)-1][0]
-                print float(co_left[0])
                 listdata6[int(right)-1][0] = float(co_left[0]) * -1
                 listdata6[int(right)-1][1] = float(co_left[1])
                 listdata6[int(right)-1][2] = float(co_left[2])
@@ -310,7 +301,6 @@ else:
                 listdata6[int(number)-1][0] = float(listdata6[int(number2)-1][0])*-1
                 listdata6[int(number)-1][1] = float(listdata6[int(number2)-1][1])
                 listdata6[int(number)-1][2] = float(listdata6[int(number2)-1][2])  
-                #print "Locatie > Lijst %s, Positie %s"%(spec,pos)
             except:
                 continue
 
