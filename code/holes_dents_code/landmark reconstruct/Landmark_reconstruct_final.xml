@@ -1,0 +1,36 @@
+<tool id="Landmark_reconstructor" name="Landmark_reconstructor">
+  <description>reconstruct landmarks</description>
+  <command interpreter="python"> 
+    Landmark_reconstruct_final.py $input $input2 $site $output $output2
+    
+    
+  </command>
+  <inputs>
+    <param name="input" type="data" label="dta file" />
+    <param name="input2" type="data" label="connect file" />
+    <param name="site" type="select" label="Left site is good">
+      <option value="0" selected="true">Yes</option>
+      <option value="1" >No</option>
+      
+    </param>
+  </inputs>
+  <outputs>
+    <data  name="output" type = "data" format = "dta" label="rotate ${on_string}" />
+    <data  name="output2" type = "data" format = "dta" label="Landmark reconstruct ${on_string}" />
+  </outputs>
+  <help>
+	**What it does**
+
+	Reconstruct landmarks
+	
+
+	**Input file**
+
+	.dta file created by:
+
+	Created by Landmark. http://graphics.idav.ucdavis.edu/research/EvoMorph
+
+
+
+  </help>
+</tool>
