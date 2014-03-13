@@ -1,16 +1,22 @@
 #second part of face creation program
-#places the points in boxes so you can compare the boxes with eachother?
-
+#calculating if points are correct. 
 import math
 from math import *
 import sys
 import numpy
 
+
+from time import gmtime, strftime
+a = strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
+print a 
+
 name_file_ply = 'outfile_rotating2.ply'
-output = open('new_coordinates.ply', 'w')
+output = open('new_coordinates2.ply', 'w')
 file_ply = open(name_file_ply)
+
 var_col = 0
-site = 1 #MOET NOG VERANDERD WORDEN
+site = 0 #MOET NOG VERANDERD WORDEN = links
+
 #extracting the header
 for x in range(0, 20):
     readheader = file_ply.readline().strip().split()
@@ -28,321 +34,215 @@ for x in range(0, 20):
 
     if readheader[0] == "element" and readheader[1] == "face":
         var_face_ln = readheader[1]
-        var_face_nm = readheader[2]
+        var_face_nm = readheader[2] #number of faces
 
-listje = [] #sub list for coordinates
-listtotal_vertex = [] #coordinates x,y,z list
+
 listtotal_colors = []
 sub_colors = []
 print 'end header'
+
 file_ply.close()
 file1 = open(name_file_ply)
+matrix = numpy.zeros((int(var_vertex_nm),3)) #creating empty numpy array. 
 
+#filling the array with the coordinates
+count = 0
 for a in range(0, (int(var_header) + int(var_vertex_nm) + int(var_face_nm) + 1)):
     line = file1.readline().strip().split()
     if int(var_header) < a < (int(var_vertex_nm)+ int(var_header)+1):
-        rayx = listje.append(line[0])
-        rayy = listje.append(line[1])
-        rayz = listje.append(line[2])
-        listtotal_vertex.append(listje) #x y z coordinates to list
-        listje = []        
+        matrix[count][0] = line[0]
+        matrix[count][1] = line[1]
+        matrix[count][2] = line[2]
+        count += 1
 
-print 'end xyz coordinates to list'
+print 'end xyz coordinates to array'
 
 
-#sort on y coordinaat
-listtotal_vertex.sort(key = lambda x: float((x[1])))
-#vertex with max y and vertex with min y 
-lowest_y = float(listtotal_vertex[0][1]) #min y
-highest_y = float(listtotal_vertex[-1][1]) #max y
+#calculating the max and min of x, y and z
+amin = numpy.amin(matrix, axis = 0) #minima of x y and z
+amax = numpy.amax(matrix, axis = 0) #maxima of x y and z
+
 
 #total number of points divided by the window of y
-number_points_y_range = float(var_vertex_nm) / (highest_y - lowest_y)
+number_points_y_range = float(var_vertex_nm) / (amax[1] - amin[1])
 print 'number of points in  y range: %s'%(number_points_y_range)
-rangenm = float(var_vertex_nm)/ 100000 #moet die 100000 zijn?
+rangenm = float(var_vertex_nm)/ 100000#moet die 100000 zijn?4
 print 'rangenm', rangenm
 
-#sort on x coordinate
-listtotal_vertex.sort(key = lambda x: (float(x[0])))
-lowest_x = float(listtotal_vertex[0][0])
-highest_x = float(listtotal_vertex[-1][0])
-
-print "lowest_x: %s"%(lowest_x)
-print "highest_x: %s"%(highest_x)
+print "lowest_x: %s"%(amin[0])
+print "highest_x: %s"%(amax[0])
+print "lowest_y: %s"%(amin[1])
+print "highest_y: %s"%(amax[1])
 
 # step sizes 
-steps_y = (highest_y - lowest_y)/rangenm
-steps_x = (highest_x - lowest_x)/rangenm
-#print steps_x, 'steps_x'
+steps_y = (amax[1] - amin[1])/rangenm #hoogste y - laagste y
+steps_x = (amax[0] - amin[0])/rangenm # hoogste x - laagste x
+print steps_y, 'steps_y'
+print steps_x, 'steps_x'
 
 #calculating number of boxes
-number_of_boxes_hor = math.ceil(abs(highest_x/steps_x))
-number_of_boxes_hor2 = math.ceil(abs(lowest_x/steps_x))
+number_of_boxes_hor = math.ceil(abs(amax[0]/steps_x))
+number_of_boxes_hor2 = math.ceil(abs(amin[0]/steps_x))
 if number_of_boxes_hor < number_of_boxes_hor2:
     number_of_boxes_hor = number_of_boxes_hor2 # number of column boxes
+number_of_boxes_ver = math.ceil(abs((amax[1] + abs(amin[1]))/steps_y)) #number of row boxes
 
-number_of_boxes_ver = math.ceil(abs((highest_y + abs(lowest_y))/steps_y)) #number of row boxes
-
+if abs(amax[0]) < abs(amin[0]):
+    x_window_min_x = amin[0]
+    x_window_max_x= amin[0] *-1
+else:
+    x_window_min_x = amax[0] *-1
+    x_window_max_x = amin[0]
 
 print number_of_boxes_ver, 'number_of_boxes_ver'
-print number_of_boxes_hor, 'number_of_boxes_hor'
-lijst_range = []
-dictiolijst_co = {} #dictionary
-x_start1 = 0.0
-x_start2 = 0.0
-x_window_max1 = 0.0
-x_window_max2 = 0.0
-y_window_min = lowest_y
-y_window_max = lowest_y
+print number_of_boxes_hor *2, 'number_of_boxes_hor'
 
-print 'creating the dictionary'
-#creating the dictionary with the varname as key and a empty list as value
+
+#creating the list with the ranges
+y_window_min = amin[1]
+y_window_max = amin[1]
+newlist = []
+sublist = []
+x_window_min2_x = x_window_min_x + steps_x
+y_window_min2 = y_window_min + steps_y
+x_window_min = x_window_min_x
+x_window_min2 = x_window_min2_x
+
+
 for a in range(0,int(number_of_boxes_ver)): #number of rows
+    x_window_min = x_window_min_x
+    x_window_min2 = x_window_min2_x
+    y_window_min = y_window_min2
+    y_window_min2+= steps_y
     for b in range(0, int((2*number_of_boxes_hor))): #number of columns
-        varname = "%s_%s"%(a,b)
-        dictiolijst_co[varname] = []
-print len(dictiolijst_co)
-print 'filling the list'
-#filling the list with the varname and the x and y coordinates of the range.
-# The varname exist of the row number of the box and the column number.
-# Even column numbers are at the left site of the y axis, odd numbers at the right site.
-for c in range(0,int(number_of_boxes_ver)):
-    y_window_max += steps_y
-    x_start1 = 0.0
-    x_start2 = 0.0
-    x_window_max1 = 0.0
-    x_window_max2 = 0.0
-    for d in range(0, int((2*number_of_boxes_hor))):
-        varname = "%s_%s"%(c,d) #var name of the box
-        if d%2 == 0: # even numbers, the left side of the object
-            x_window_max1 += steps_x
-            lijst_range.append([varname, x_start1, x_window_max1, y_window_min, y_window_max])
-            x_start1 += steps_x
-            
-        else: #odd numbers, the right side of the object
-            x_window_max2 -= steps_x
-            lijst_range.append([varname, x_start2, x_window_max2, y_window_min, y_window_max])
-            x_start2  -= steps_x
-        #x_window_min += steps_x
-    y_window_min += steps_y
+        sublist.append(x_window_min)
+        sublist.append(x_window_min2)
+        sublist.append(y_window_min)
+        sublist.append(y_window_min2)
+        newlist.append(sublist)
+        sublist = []
+        x_window_min = x_window_min2
+        x_window_min2 += steps_x
+    
 
-print 'filling the coordinates in the box'
-# for loop to place al te coordinates in the right box
-for f in range(0,len(listtotal_vertex)):
-    x_point = float(listtotal_vertex[f][0]) #x coordinate face
-    y_point = float(listtotal_vertex[f][1]) #y coordinate face 
+#empty the list but maintaining the structure   
+newlist2=[]
+newlist2sub = []
 
-    for g in range(0,len(lijst_range)):
-        if x_point < 0: #if x is negative
-            if  x_point <= float(lijst_range[g][1]) and x_point > float(lijst_range[g][2]):
-                if y_point >= float(lijst_range[g][3]) and y_point < float(lijst_range[g][4]):
-                    dictiolijst_co[str(lijst_range[g][0])].append(listtotal_vertex[f])
-        else: # if x is positive
-            if x_point >= float(lijst_range[g][1]) and x_point < float(lijst_range[g][2]):
-                if y_point >= float(lijst_range[g][3]) and y_point < float(lijst_range[g][4]):
-                    dictiolijst_co[str(lijst_range[g][0])].append(listtotal_vertex[f])
-                
-#print dictiolijst_co
-################################ new part for mean
-newdictio = {}
-x = 0
-total  = 0
-gemiddeldetotaal = 0
-print 'calculate mean'
-for x in range(0,int(number_of_boxes_ver)):
-    for y in range(0, int((2*number_of_boxes_hor))):
-        varname = "%s_%s"%(x,y)
-        #print varname
-        d = dictiolijst_co.get(varname)
-        #print d
-        try:
-            if len(d) == 0:
-                newdictio[varname] = 0 #dit klopt niet
-            else: 
-                for e in range(0,len(d)):
-                    total += float(d[e][0])
-                gemiddelde  = total/(len(d))
-                #gemiddeldetotaal += gemiddelde
-                newdictio[varname] = gemiddelde
-                total = 0
-        except:
-            continue
+for x in range(0,len(newlist)):
+    for y in range(3,-1,-1):
+        newlist2sub.append(newlist[x].pop(y))
+    newlist2.append(newlist2sub)
+    newlist2sub = []
+
+#filling the new list with the coordinates for each box
+for x in range(0,int(var_vertex_nm)):
+    for y in range(0,len(newlist2)): #notice the ranges are in reverse order of each box
+        if float(matrix[x][0]) >= float(newlist2[y][3]) and float(matrix[x][0]) < float(newlist2[y][2]) and float(matrix[x][1]) >= float(newlist2[y][1]) and float(matrix[x][1]) < float(newlist2[y][0]):
+            newlist[y].append(matrix[x])
 
 
+
+#Selecting the boxes on the symmetry axis and calculating the mean of every box
 counter = 0
-difference = 0
-lijstje2 = []
-print 'calculating mean and stdev'
-#for calculating mean and stdev.
-for x in range(0, int(2*number_of_boxes_hor)):
-    y = 0 
-    while True:
-        if y < int(number_of_boxes_ver):
-            varname1 = "%s_%s"%(x,y)
-            varname2 = "%s_%s"%(x,y+1)
-            d = newdictio.get(varname1)
-            f = newdictio.get(varname2)
-            try:
-                lijstje2.append(abs(d-f))
-                counter += 1
-            except:
-                y += 2
-                continue
-            y += 2
-        else:
-            break
-
-#print 'lijstje2', lijstje2
-counter = 0
-mean_percentage = numpy.mean(lijstje2) #gemiddelde van de verschillen tussen de vakjes
+counter2 = 0
+counter3 = 0
+row_count = 0
+meanlist = []
+difference = [] #whit boxes who are empty, the empty ones get the number 0
+differencemean = [] # is without boxes who are empty
+total = 0
+for x in range(0, int(number_of_boxes_ver)*(int(number_of_boxes_hor))):
+    if counter % (int (number_of_boxes_hor)*2) == 0:
+        counter = 0
+    if counter3 == (int(number_of_boxes_hor)):
+        counter2 += (int(number_of_boxes_hor))
+        counter3 = 0
+    
+    eerste_pos = newlist[counter2]
+    laatste_pos = newlist[counter2 + (int(number_of_boxes_hor)*2 -1)- counter]
+    if len(eerste_pos) == 0:
+        mean1 = 2000 # hier moet nog wat anders voor komen.
+        mean3 = ''
+    else:
+        for e in range(0,len(eerste_pos)):
+            total += float(eerste_pos[e][0])
+        mean1 = total/len(eerste_pos)
+        mean3 = mean1
+        total = 0
+    if len(laatste_pos) == 0: #this has to be changed
+        mean2 = 1000
+        mean4 = ''
+    else:
+        for e in range(0,len(laatste_pos)):
+            total += float(laatste_pos[e][0])
+        mean2 = total/len(laatste_pos)
+        mean4 = mean2
+        total = 0
+    
+    difference.append(abs(mean2 - mean1))
+    counter += 2
+    counter2 += 1
+    counter3 += 1
+    try:
+        differencemean.append(abs(mean4 - mean3))
+    except:
+        continue
+    
+mean_percentage = numpy.mean(differencemean) #calculating the mean without empty boxes
 print mean_percentage, 'mean percentage'
-std_percentage = numpy.std(lijstje2) # standard deviatie der van
+std_percentage = numpy.std(differencemean) # calculating the standard deviation of the list without the empty boxes
 print std_percentage, 'std'
 
 left_range = mean_percentage - std_percentage #left range mean minus one standard deviation
-right_range = mean_percentage + std_percentage
+right_range = mean_percentage + std_percentage # right range mean plus one standard deviation
 
-#######
-#left_range = 2.20
-#print left_range ,'left_range'
-#print right_range, 'right_range'
-co = []
-lijstje2 = []
-print 'calculating differences in range'
-#for calculating if difference in range 
-for x in range(0, int(2*number_of_boxes_hor)):
-    y = 0 
-    while True:
-        if y < int(number_of_boxes_ver):
-            varname1 = "%s_%s"%(x,y)
-            varname2 = "%s_%s"%(x,y+1)
-            d = newdictio.get(varname1)
-            f = newdictio.get(varname2)
-            #print varname1, 'varname'
-            try:
-                difference = abs(float(d)-float(f))
-                #print 'difference', difference
-                if (difference > right_range) or (difference < left_range):
-                    if site == 0:
-                        b = (dictiolijst_co.get(varname2))
-                        for i in range (0, len(b)):
-                            co.append(b[i])
-                    elif site == 1:
-                        b = (dictiolijst_co.get(varname1))
-                        for i in range (0, len(b)):
-                            co.append(b[i])
-                counter += 1
-            except:
-                y += 2
-                continue
-            y += 2
-        else:
-            break
-#print co
-print 'write newcoordinates with colorcode to ouputfile'
-output.write("ply\nformat ascii 1.0\ncomment Createdddddd By NextEngine ScanStudio\n")
-output.write("element vertex %s\n"%(len(co)))
-output.write("property float x\nproperty float y\nproperty float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\n")
-output.write("element face %s\n"%(len(co)))
-output.write("property list uchar int vertex_indices\nend_header\n")
-#writing the newcoordinates with colorcode to ouputfile
-for a in range(0,len(co)):
-    getal = float(co[a][0])
-    co[a][0] = (getal * -1)
+
+print 'right range', right_range
+print 'left range', left_range
+
+###### Collecting the values of the boxes which have to be mirrored
+y = 0
+counter = 0
+counter2 = 0
+for x in range(0, len(difference)):
+    # if left side is of the object is correct
+    if site == 0:
+        if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
+            counter = 0
+            counter2 += (int(number_of_boxes_hor))
+        counter += 1
+        counter2 += 1 #left site counter 
     
-    #print co[a][0]
-    output.write('%s %s %s 230 0 182 \n'%(co[a][0], float(co[a][1]), float(co[a][2])))
+        if (difference[x] > right_range) or (difference[x] < left_range):
+            if len(newlist[counter2 -1]) != 0: #klopt dit?
+                sub = (newlist[counter2 -1]) # -1 omdat je de posities telt van de lijst en de counter 1 tehoog is.
+                for y in range(0, len(sub)):
+                    getal= float(sub[y][0]) * -1
+                    sub[y][0] = getal
+                    output.write('%s %s %s 230 0 182 \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2])))
+                output.write('p\n') #just for checking        
 
+    # if the right side of the object is correct
+    if site == 1:
+        if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
+            counter = 0
+            counter2 += (int(number_of_boxes_hor))
+        counter += 1
+        counter2 += 1
+        dif = (int(number_of_boxes_hor)) - counter
+        counter3 = counter2 + (dif*2) + 1 # right site counter
+        if (difference[x] > right_range) or (difference[x] < left_range):
+            if len(newlist[counter3 -1]) != 0: #klopt dit?
+                sub = (newlist[counter3 -1]) # -1 omdat je de posities telt van de lijst en de counter 1 tehoog is.
+                for y in range(0, len(sub)):
+                    getal= float(sub[y][0]) * -1
+                    sub[y][0] = getal
+                    output.write('%s %s %s 233 0 182 \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2])))
+                output.write('t\n') #just for checking        
 
+output.close()                      
 
-      
-file1.close()
-file1 = open(name_file_ply)
-C = []
-sub = []
-print 'calculating the nearest 2 points'
-#calculating the nearest 2 points of point of interest 
-for b in range(0, len(co)):
-    closestDist1 = 1000000000
-    closestDist2 = 1000000000
-    count= 0
-    for c in range(0,len(co)):
-        dist1 = ((float(co[b][0])- float(co[c][0]))**2) +((float(co[b][1])-float(co[c][1]))**2) +((float(co[b][2])-float(co[c][2]))**2) #klopt dit?
-        dist2 = ((float(co[b][0])- float(co[c][0]))**2) +((float(co[b][1])-float(co[c][1]))**2) +((float(co[b][2])-float(co[c][2]))**2)#klopt dit?
-        if count < 1: 
-            first = (co[b])
-            second = co[c]
-            third = co[c]
-            count = 1
-        if closestDist1 > dist1 and dist1 != 0:
-            if third == first:
-                third = second
-            second = co[c]
-
-            closestDist1 = dist1
-            
-                
-        elif closestDist2 > dist2 and dist2 != 0:
-            third = co[c]
-            closestDist2 = dist2
-
-        else:
-            continue
-
-    sub.append(co[b])
-    sub.append(second)
-    sub.append(third)
-    C.append(sub)
-    sub = []
-outfile2 = open('new_plyfile.ply', 'w')
-#print C
-g = 0
-
-print len(C)
-print len(co)
-for d in range(0,(int(var_header) + int(var_vertex_nm) + int(var_face_nm) + 1)):
-    line2 = file1.readline().strip()
-    readline2 = line2.strip().split()
-    if readline2[0] == "element" and readline2[1] == "vertex":
-        outfile2.write("element vertex %s\n"%(int(var_vertex_nm) + int(len(co)))) #number of vertexen changing
-                       
-    elif readline2[0] == "element" and readline2[1] == "face":
-        outfile2.write("element face %s\n"%(int(var_face_nm) + int(len(C)))) #number of vertexen changing                                      
-    elif (int(var_header) < d < (int(var_header) + int(var_vertex_nm))): #rotated vertexen, with original color code
-        outfile2.write('%s\n'%(line2))
-        g += 1
-        
-    elif (int(var_header) + int(var_vertex_nm)) == d: #for new vertexen, with color code 0,0,0
-        outfile2.write('%s\n'%(line2)) #the last original vertex
-        g += 1
-        
-        for a in range(0, len(co)): # the new vertexen, with color code
-            getal = float(co[a][0])
-            co[a][0] = (getal * -1)
-    
-            #print co[a][0]
-            outfile2.write('%s %s %s 230 0 182\n'%(co[a][0], float(co[a][1]), float(co[a][2])))
-            g += 1
-                                            
-        
-    else: #everything left
-        outfile2.write('%s\n'%(line2))
-
-
- 
-print 'writing points to outputfile'
-#writing points to outputfile
-for z in range(0,len(C)):
-    point1 = C[z][0]
-    point2 = C[z][1]
-    point3 = C[z][2]
-    indexthing1 = co.index(C[z][0])
-    indexthing2 = co.index(C[z][1])
-    indexthing3 = co.index(C[z][2])
-    output.write("3 %s %s %s\n"%((indexthing1), (indexthing2), (indexthing3)))
-    outfile2.write("3 %s %s %s\n"%((indexthing1 + int(var_vertex_nm)), (indexthing2 + int(var_vertex_nm)), (indexthing3 + int(var_vertex_nm))))
-output.close() 
-outfile2.close()
-number_extra_faces = len(C)
-number_extra_co = len(co)
+a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
+print a 
 
