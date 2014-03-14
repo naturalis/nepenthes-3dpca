@@ -4,7 +4,7 @@ import math
 from math import *
 import sys
 import numpy
-
+from scipy.spatial import cKDTree
 
 from time import gmtime, strftime
 a = strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
@@ -15,7 +15,7 @@ output = open('new_coordinates2.ply', 'w')
 file_ply = open(name_file_ply)
 
 var_col = 0
-site = 0 #MOET NOG VERANDERD WORDEN = links
+site = 1 #MOET NOG VERANDERD WORDEN = links
 
 #extracting the header
 for x in range(0, 20):
@@ -36,7 +36,7 @@ for x in range(0, 20):
         var_face_ln = readheader[1]
         var_face_nm = readheader[2] #number of faces
 
-
+print var_vertex_nm, 'dit'
 listtotal_colors = []
 sub_colors = []
 print 'end header'
@@ -137,6 +137,9 @@ for x in range(0,len(newlist)):
 
 #filling the new list with the coordinates for each box
 for x in range(0,int(var_vertex_nm)):
+    #if x%1000 == 0:
+        #print x
+        
     for y in range(0,len(newlist2)): #notice the ranges are in reverse order of each box
         if float(matrix[x][0]) >= float(newlist2[y][3]) and float(matrix[x][0]) < float(newlist2[y][2]) and float(matrix[x][1]) >= float(newlist2[y][1]) and float(matrix[x][1]) < float(newlist2[y][0]):
             newlist[y].append(matrix[x])
@@ -191,6 +194,7 @@ for x in range(0, int(number_of_boxes_ver)*(int(number_of_boxes_hor))):
     
 mean_percentage = numpy.mean(differencemean) #calculating the mean without empty boxes
 print mean_percentage, 'mean percentage'
+print len(differencemean), 'len differencemean'
 std_percentage = numpy.std(differencemean) # calculating the standard deviation of the list without the empty boxes
 print std_percentage, 'std'
 
@@ -205,31 +209,29 @@ print 'left range', left_range
 y = 0
 counter = 0
 counter2 = 0
+sub = []
+total = []
 for x in range(0, len(difference)):
     # if left side is of the object is correct
-    if site == 0:
-        if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
-            counter = 0
-            counter2 += (int(number_of_boxes_hor))
-        counter += 1
-        counter2 += 1 #left site counter 
     
+    if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
+        counter = 0
+        counter2 += (int(number_of_boxes_hor))
+    counter += 1
+    counter2 += 1 #left site counter 
+    if site == 0:
         if (difference[x] > right_range) or (difference[x] < left_range):
             if len(newlist[counter2 -1]) != 0: #klopt dit?
                 sub = (newlist[counter2 -1]) # -1 omdat je de posities telt van de lijst en de counter 1 tehoog is.
                 for y in range(0, len(sub)):
                     getal= float(sub[y][0]) * -1
                     sub[y][0] = getal
+                    total.append(sub[y])
                     output.write('%s %s %s 230 0 182 \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2])))
-                output.write('p\n') #just for checking        
+                #output.write('p\n') #just for checking        
 
     # if the right side of the object is correct
     if site == 1:
-        if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
-            counter = 0
-            counter2 += (int(number_of_boxes_hor))
-        counter += 1
-        counter2 += 1
         dif = (int(number_of_boxes_hor)) - counter
         counter3 = counter2 + (dif*2) + 1 # right site counter
         if (difference[x] > right_range) or (difference[x] < left_range):
@@ -238,11 +240,44 @@ for x in range(0, len(difference)):
                 for y in range(0, len(sub)):
                     getal= float(sub[y][0]) * -1
                     sub[y][0] = getal
-                    output.write('%s %s %s 233 0 182 \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2])))
-                output.write('t\n') #just for checking        
+                    total.append(sub[y])
+                    output.write('%s %s %s 233 0 %s \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2]),(x+10)))
+                
+                #output.write('t\n') #just for checking
 
+
+###calculating the triangle, nu is het nog alles bij elkaar, moet ik het opsplitsen in de boxjes?
+# of moet ik een maximum distance neerzetten, zodat je niet rare dingen bij elkaar krijgt. 
+
+data = numpy.array(total)
+
+tree = cKDTree(data)
+
+counter = 0
+for x in data:
+    dists, indexes = tree.query(numpy.array(x), k=3) #moet ik hier nog wat veranderen qua overname van namen
+    output.write('%s '%(3))
+    for dist, index in zip(dists, indexes):
+        if dist > 15:#moet nog wat anders op verzinnen, dat die niet hele grootte vlakken kan gaan maken.  
+            break
+        else:
+            counter += 1
+            output.write('%s '%(index))
+        output.write('\n')
 output.close()                      
 
+#data = []
+#total = []
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
 print a 
 
+with open('new_coordinates3.ply', 'w') as outfile:
+    with open('new_coordinates2.ply') as infile:
+        outfile.write("ply\nformat ascii 1.0\ncomment Createdddddd By NextEngine ScanStudio\n")
+        outfile.write("element vertex %s\n"%(len(data)))
+        outfile.write("property float x\nproperty float y\nproperty float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\n")
+        outfile.write("element face %s\n"%(counter/3))
+        outfile.write("property list uchar int vertex_indices\nend_header\n")
+        for line in infile:
+            outfile.write(line)
+outfile.close()
