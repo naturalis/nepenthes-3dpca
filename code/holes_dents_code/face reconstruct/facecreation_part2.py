@@ -15,7 +15,7 @@ output = open('new_coordinates2.ply', 'w')
 file_ply = open(name_file_ply)
 
 var_col = 0
-site = 1 #MOET NOG VERANDERD WORDEN = links
+site = 1 #MOET NOG VERANDERD WORDEN = 0 = links
 
 #extracting the header
 for x in range(0, 20):
@@ -66,71 +66,82 @@ amax = numpy.amax(matrix, axis = 0) #maxima of x y and z
 #total number of points divided by the window of y
 number_points_y_range = float(var_vertex_nm) / (amax[1] - amin[1])
 print 'number of points in  y range: %s'%(number_points_y_range)
-rangenm = float(var_vertex_nm)/ 100000#moet die 100000 zijn?4
+rangenm = float(var_vertex_nm)/ 10#moet die 100000 zijn?4
 print 'rangenm', rangenm
 
 print "lowest_x: %s"%(amin[0])
 print "highest_x: %s"%(amax[0])
 print "lowest_y: %s"%(amin[1])
 print "highest_y: %s"%(amax[1])
+print "lowest_z: %s"%(amin[2])
+print "highest_z: %s"%(amax[2])
 
-# step sizes 
-steps_y = (amax[1] - amin[1])/rangenm #hoogste y - laagste y
-steps_x = (amax[0] - amin[0])/rangenm # hoogste x - laagste x
-print steps_y, 'steps_y'
-print steps_x, 'steps_x'
 
-#calculating number of boxes
-number_of_boxes_hor = math.ceil(abs(amax[0]/steps_x))
-number_of_boxes_hor2 = math.ceil(abs(amin[0]/steps_x))
-if number_of_boxes_hor < number_of_boxes_hor2:
-    number_of_boxes_hor = number_of_boxes_hor2 # number of column boxes
-number_of_boxes_ver = math.ceil(abs((amax[1] + abs(amin[1]))/steps_y)) #number of row boxes
+number_of_boxes_ver = 6 # dit moet nog anders
+number_of_boxes_hor = 4
+number_of_boxes_z = 4
+
 
 if abs(amax[0]) < abs(amin[0]):
     x_window_min_x = amin[0]
     x_window_max_x= amin[0] *-1
+    steps_x = abs(amin[0]) / number_of_boxes_hor
 else:
     x_window_min_x = amax[0] *-1
     x_window_max_x = amin[0]
-
+    steps_x = abs(amax[0]) / number_of_boxes_hor
+steps_y = (abs(amax[1]) + abs(amin[1])) / number_of_boxes_ver
+steps_z = (abs(amax[2]) + abs(amin[2])) / number_of_boxes_z
 print number_of_boxes_ver, 'number_of_boxes_ver'
 print number_of_boxes_hor *2, 'number_of_boxes_hor'
-
-
+print number_of_boxes_z, 'number_of_boxes_z'
+print steps_y, 'steps_y'
+print steps_x, 'steps_x'
+print steps_z, 'steps_z'
 #creating the list with the ranges
+
 y_window_min = amin[1]
 y_window_max = amin[1]
+z_window_min = amin[2]
 newlist = []
 sublist = []
-x_window_min2_x = x_window_min_x + steps_x
-y_window_min2 = y_window_min + steps_y
-x_window_min = x_window_min_x
-x_window_min2 = x_window_min2_x
 
+
+y_window_min2 = y_window_min
+z_window_min2 = z_window_min
 
 for a in range(0,int(number_of_boxes_ver)): #number of rows
     x_window_min = x_window_min_x
-    x_window_min2 = x_window_min2_x
+    x_window_min2 = x_window_min_x + steps_x
     y_window_min = y_window_min2
     y_window_min2+= steps_y
-    for b in range(0, int((2*number_of_boxes_hor))): #number of columns
-        sublist.append(x_window_min)
-        sublist.append(x_window_min2)
-        sublist.append(y_window_min)
-        sublist.append(y_window_min2)
-        newlist.append(sublist)
-        sublist = []
-        x_window_min = x_window_min2
-        x_window_min2 += steps_x
-    
+    z_window_min = amin[2]
+    z_window_min2 = z_window_min
+    for c in range(0,int(number_of_boxes_z)):
+        z_window_min = z_window_min2
+        z_window_min2 += steps_z
+        x_window_min = x_window_min_x
+        x_window_min2 = x_window_min_x + steps_x
+        for b in range(0, int((2*number_of_boxes_hor))): #number of columns 
+            sublist.append(x_window_min)
+            sublist.append(x_window_min2)
+            sublist.append(y_window_min)
+            sublist.append(y_window_min2)
+            sublist.append(z_window_min)
+            sublist.append(z_window_min2)
+            newlist.append(sublist)
+            sublist = []
+            x_window_min = x_window_min2
+            x_window_min2 += steps_x
 
 #empty the list but maintaining the structure   
 newlist2=[]
 newlist2sub = []
+newlistsub = []
+
 
 for x in range(0,len(newlist)):
-    for y in range(3,-1,-1):
+    for y in range(5,-1,-1):
         newlist2sub.append(newlist[x].pop(y))
     newlist2.append(newlist2sub)
     newlist2sub = []
@@ -141,10 +152,8 @@ for x in range(0,int(var_vertex_nm)):
         #print x
         
     for y in range(0,len(newlist2)): #notice the ranges are in reverse order of each box
-        if float(matrix[x][0]) >= float(newlist2[y][3]) and float(matrix[x][0]) < float(newlist2[y][2]) and float(matrix[x][1]) >= float(newlist2[y][1]) and float(matrix[x][1]) < float(newlist2[y][0]):
+        if float(matrix[x][0]) >= float(newlist2[y][5]) and float(matrix[x][0]) < float(newlist2[y][4]) and float(matrix[x][1]) >= float(newlist2[y][3]) and float(matrix[x][1]) < float(newlist2[y][2]) and float(matrix[x][2]) >= float(newlist2[y][1]) and float(matrix[x][2]) < float(newlist2[y][0]):
             newlist[y].append(matrix[x])
-
-
 
 #Selecting the boxes on the symmetry axis and calculating the mean of every box
 counter = 0
@@ -155,7 +164,7 @@ meanlist = []
 difference = [] #whit boxes who are empty, the empty ones get the number 0
 differencemean = [] # is without boxes who are empty
 total = 0
-for x in range(0, int(number_of_boxes_ver)*(int(number_of_boxes_hor))):
+for x in range(0, (int(number_of_boxes_ver)*int(number_of_boxes_hor) * int(number_of_boxes_z))):
     if counter % (int (number_of_boxes_hor)*2) == 0:
         counter = 0
     if counter3 == (int(number_of_boxes_hor)):
@@ -183,7 +192,7 @@ for x in range(0, int(number_of_boxes_ver)*(int(number_of_boxes_hor))):
         mean4 = mean2
         total = 0
     
-    difference.append(abs(mean2 - mean1))
+    difference.append(float(abs(mean2 - mean1)))
     counter += 2
     counter2 += 1
     counter3 += 1
@@ -192,15 +201,18 @@ for x in range(0, int(number_of_boxes_ver)*(int(number_of_boxes_hor))):
     except:
         continue
     
+#print difference  
 mean_percentage = numpy.mean(differencemean) #calculating the mean without empty boxes
 print mean_percentage, 'mean percentage'
 print len(differencemean), 'len differencemean'
 std_percentage = numpy.std(differencemean) # calculating the standard deviation of the list without the empty boxes
 print std_percentage, 'std'
 
-left_range = mean_percentage - std_percentage #left range mean minus one standard deviation
-right_range = mean_percentage + std_percentage # right range mean plus one standard deviation
+left_range = float(mean_percentage) - float(std_percentage) #left range mean minus one standard deviation
+right_range = float(mean_percentage) + (2* float(std_percentage) )# right range mean plus one standard deviation
 
+if left_range > 0:
+    left_range = 0.0
 
 print 'right range', right_range
 print 'left range', left_range
@@ -211,24 +223,28 @@ counter = 0
 counter2 = 0
 sub = []
 total = []
+left_range = "%.10f"%(left_range)
+print left_range
+
 for x in range(0, len(difference)):
+    difference_x = "%.10f"%(difference[x])
     # if left side is of the object is correct
-    
     if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
         counter = 0
         counter2 += (int(number_of_boxes_hor))
     counter += 1
     counter2 += 1 #left site counter 
     if site == 0:
-        if (difference[x] > right_range) or (difference[x] < left_range):
+        if (float(difference_x) < float(left_range)) or (float(difference_x) > float(right_range)):
+
             if len(newlist[counter2 -1]) != 0: #klopt dit?
                 sub = (newlist[counter2 -1]) # -1 omdat je de posities telt van de lijst en de counter 1 tehoog is.
                 for y in range(0, len(sub)):
                     getal= float(sub[y][0]) * -1
                     sub[y][0] = getal
                     total.append(sub[y])
-                    output.write('%s %s %s 230 0 182 \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2])))
-                #output.write('p\n') #just for checking        
+                    output.write('%s %s %s 230 0 %s \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2]),(x+60)))
+           
 
     # if the right side of the object is correct
     if site == 1:
@@ -241,43 +257,81 @@ for x in range(0, len(difference)):
                     getal= float(sub[y][0]) * -1
                     sub[y][0] = getal
                     total.append(sub[y])
-                    output.write('%s %s %s 233 0 %s \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2]),(x+10)))
+                    output.write('%s %s %s 150 0 %s \n'%(sub[y][0], float(sub[y][1]), float(sub[y][2]),(x+60)))
                 
-                #output.write('t\n') #just for checking
-
+                
+    
 
 ###calculating the triangle, nu is het nog alles bij elkaar, moet ik het opsplitsen in de boxjes?
 # of moet ik een maximum distance neerzetten, zodat je niet rare dingen bij elkaar krijgt. 
 
 data = numpy.array(total)
-
+#print len(data)
+#print data
 tree = cKDTree(data)
-
+#print tree
 counter = 0
+string_index =[]
+output3 = open('outputsub.ply', 'w')
 for x in data:
-    dists, indexes = tree.query(numpy.array(x), k=3) #moet ik hier nog wat veranderen qua overname van namen
-    output.write('%s '%(3))
+    dists, indexes = tree.query(numpy.array(x), k=3)
+
     for dist, index in zip(dists, indexes):
-        if dist > 15:#moet nog wat anders op verzinnen, dat die niet hele grootte vlakken kan gaan maken.  
+        if dist > 3:#moet nog wat anders op verzinnen, dat die niet hele grootte vlakken kan gaan maken.    
             break
         else:
-            counter += 1
-            output.write('%s '%(index))
-        output.write('\n')
-output.close()                      
+            string_index.append(index)
+    if len(string_index) == 3:
+        counter += 3
+        #output3.write('%s '%(3))
+        output3.write('%s %s %s'%(string_index[0], string_index[1], string_index[2]))
+        output3.write('\n')
+    string_index = []
 
-#data = []
-#total = []
+
+output.close()
+output3.close()
+
+outfile2 = open('final_output.ply', 'w')
+
+#writing the output file
+file1.close()
+file1 = open(name_file_ply)
+g = 0
+for d in range(0,(int(var_header) + int(var_vertex_nm) + int(var_face_nm) + 1)):
+    line2 = file1.readline().strip()
+    readline2 = line2.strip().split()
+    if readline2[0] == "element" and readline2[1] == "vertex":
+        outfile2.write("element vertex %s\n"%(int(var_vertex_nm) + int(len(data)))) #number of vertexen changing
+                       
+    elif readline2[0] == "element" and readline2[1] == "face":
+        outfile2.write("element face %s\n"%(int(var_face_nm) + counter/3))#number of vertexen changing                                      
+    elif (int(var_header) < d < (int(var_header) + int(var_vertex_nm))): #rotated vertexen, with original color code
+        outfile2.write('%s\n'%(line2))
+        g += 1
+        
+    elif (int(var_header) + int(var_vertex_nm)) == d: #for new vertexen, with color code 0,0,0
+        outfile2.write('%s\n'%(line2)) #the last original vertex
+        g += 1
+        with open('new_coordinates2.ply') as infile:
+            for line in infile:
+                outfile2.write(line)
+                                            
+        
+    else: #everything left
+        outfile2.write('%s\n'%(line2))
+
+output3open = open('outputsub.ply')
+for z in range(0, (counter/3)):
+    line3 = output3open.readline().strip().split()
+    outfile2.write("3 %s %s %s\n"%((int(line3[0]) + int(var_vertex_nm)), (int(line3[1])+ int(var_vertex_nm)), (int(line3[2])+ int(var_vertex_nm))))
+    
+output.close()
+outfile2.close()
+    
+
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
 print a 
-
-with open('new_coordinates3.ply', 'w') as outfile:
-    with open('new_coordinates2.ply') as infile:
-        outfile.write("ply\nformat ascii 1.0\ncomment Createdddddd By NextEngine ScanStudio\n")
-        outfile.write("element vertex %s\n"%(len(data)))
-        outfile.write("property float x\nproperty float y\nproperty float z\nproperty uchar red\nproperty uchar green\nproperty uchar blue\n")
-        outfile.write("element face %s\n"%(counter/3))
-        outfile.write("property list uchar int vertex_indices\nend_header\n")
-        for line in infile:
-            outfile.write(line)
-outfile.close()
+'''
+#numpy arrays toevoegen! 
+''' 
