@@ -1,6 +1,4 @@
 #Converter of dta to csv
-#Mirna Baak
-#9-10-2013
 #last update: 13-11-2013
 
 import sys
