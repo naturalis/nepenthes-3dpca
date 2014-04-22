@@ -5,25 +5,22 @@ from math import *
 import sys
 import numpy
 
-
+print numpy.__version__
 #Start time
 from time import gmtime, strftime
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a 
+print a 
 
 var_col = 0
 #name_file_ply = raw_input("Rotated ply file: ") #dta file
-#name_file_ply = 'outfile_rotating2.ply' #
-name_file_ply = sys.argv[1] #
+name_file_ply = 'outfile_rotating2.ply' #
 output = open('new_coordinates2.ply', 'w')
 file_ply = open(name_file_ply)
-#out_log = open('log_reConstructor.txt', 'w')
-out_log = open(sys.argv[8], 'w')
+out_log = open('log_reConstructor.txt', 'w')
 #Input user for identify which side is correct
-out_log.write('Start time: %s\n\n'%(a))
-'''while True:
+out_log.write('Start time: %s\n\nInput user:\n'%(a))
+while True:
     side = raw_input("left side of object is correct:(Yes or No):  ").upper().strip()
-    side = sys.argv[3].upper().strip()
     side.strip()
     if side == 'YES' or side == 'Y':
         out_log.write('Left side of object is correct:\t%s\n\n'%(side))
@@ -35,26 +32,22 @@ out_log.write('Start time: %s\n\n'%(a))
         break
     else:
         print 'not the right input, try again'
-'''
-side = int(sys.argv[3])
+
+
 # Input user for deviding object in squares.
-#number_of_boxes_hor = int(raw_input("number_of_boxes on x axis: ")) # number of boxes on x axis, this will be multiplied. 
-#number_of_boxes_ver = int(raw_input("number_of_boxes on y axis: ")) # number of boxes on y axis
-#number_of_boxes_z = int(raw_input("number_of_boxes on z axis: ")) # number of boxes on z axis
-#factor = int(raw_input("factor of standard deviation (standard 1): "))
-number_of_boxes_hor = int(sys.argv[4]) # number of boxes on x axis, this will be multiplied. 
-number_of_boxes_ver = int(sys.argv[5]) # number of boxes on y axis
-number_of_boxes_z = int(sys.argv[6]) # number of boxes on z axis
-factor = int(sys.argv[7])
+number_of_boxes_hor = int(raw_input("number_of_boxes on x axis: ")) # number of boxes on x axis, this will be multiplied. 
+number_of_boxes_ver = int(raw_input("number_of_boxes on y axis: ")) # number of boxes on y axis
+number_of_boxes_z = int(raw_input("number_of_boxes on z axis: ")) # number of boxes on z axis
+factor = int(raw_input("factor of standard deviation (standard 1): "))
 out_log.write("Factor standard deviation:\t%s\n\n"%(factor))
-#print number_of_boxes_hor *2, 'number_of_boxes_x'
-#print number_of_boxes_ver, 'number_of_boxes_y'
-#print number_of_boxes_z, 'number_of_boxes_z'
+print number_of_boxes_hor *2, 'number_of_boxes_x'
+print number_of_boxes_ver, 'number_of_boxes_y'
+print number_of_boxes_z, 'number_of_boxes_z'
 out_log.write("number of boxes x axis:\t%s\nnumber of boxes y axis:\t%s\nnumber of boxes z axis:\t%s\n\n"%((number_of_boxes_hor *2),(number_of_boxes_ver), (number_of_boxes_z)))
 #extracting the header
 for x in range(0, 20):
     readheader = file_ply.readline().strip().split()
-    #print readheader
+    print readheader
     if readheader[0] == 'end_header': # when the words 'end_header' are found
         var_header = x # var_header is line number
     if readheader[0] == "element" and readheader[1] == "vertex": # when 'element vertex' found
@@ -64,11 +57,11 @@ for x in range(0, 20):
         var_face_ln = readheader[1] # line number of element face
         var_face_nm = readheader[2] # amount of faces
 
-#print 'end header'
+print 'end header'
 
 file_ply.close() # closing the input file
 
-#print 'filling the array with the coordinates'
+print 'filling the array with the coordinates'
 file1 = open(name_file_ply) # open the input file second time
 
 matrix = numpy.zeros((int(var_vertex_nm),3)) # creating empty numpy array of amount of vertexen 
@@ -93,19 +86,19 @@ for a in range(0, (int(var_header) + int(var_vertex_nm) + int(var_face_nm) + 1))
         count2 += 1 # counter + 1 for next line in matrix
         if len(line) == 5: # hier nog wat op verzinnen!!!! voor als er faces zijn met 4
             check2 = True
-#print 'end xyz coordinates to array'
-#numpy.set_printoptions(threshold='nan')
+print 'end xyz coordinates to array'
+numpy.set_printoptions(threshold='nan')
 
 #Calculating the max and min of x, y and z
 amin = numpy.amin(matrix, axis = 0) #minima of x y and z
 amax = numpy.amax(matrix, axis = 0) #maxima of x y and z
 
-#print "lowest_x: %s"%(amin[0])
-#print "highest_x: %s"%(amax[0])
-#print "lowest_y: %s"%(amin[1])
-#print "highest_y: %s"%(amax[1])
-#print "lowest_z: %s"%(amin[2])
-#print "highest_z: %s"%(amax[2])
+print "lowest_x: %s"%(amin[0])
+print "highest_x: %s"%(amax[0])
+print "lowest_y: %s"%(amin[1])
+print "highest_y: %s"%(amax[1])
+print "lowest_z: %s"%(amin[2])
+print "highest_z: %s"%(amax[2])
 
 out_log.write("lowest x:\t%s\nhighest x:\t%s\nlowest y:\t%s\nhighest y:\t%s\nlowest z:\t%s\nhighest z:\t%s\n\n"%(amin[0],amax[0],amin[1],amax[1],amin[2],amax[2]))
 
@@ -129,9 +122,9 @@ steps_y = (abs(amax[1]) + abs(amin[1])) / number_of_boxes_ver
 steps_z = (abs(amax[2]) + abs(amin[2])) / number_of_boxes_z
 
 
-#print steps_y, 'steps_y'
-#print steps_x, 'steps_x'
-#print steps_z, 'steps_z'
+print steps_y, 'steps_y'
+print steps_x, 'steps_x'
+print steps_z, 'steps_z'
 
 #creating the list with the ranges for every box
 
@@ -183,7 +176,7 @@ indexlist = []
 for x in range(0,len(newlist)):
     indexlist.append([])
 
-#print 'filling the new list with the coordinates for each box'
+print 'filling the new list with the coordinates for each box'
 
 #Filling the boxes with the coordinates
 for x in range(0,int(var_vertex_nm)):
@@ -235,7 +228,7 @@ for x in range(0, (int(number_of_boxes_ver)*int(number_of_boxes_hor) * int(numbe
         mean4 = mean2
         total = 0
         
-    if abs(number_coordinates_box1 - number_coordinates_box2) > (number_coordinates_box1 / 2.0) and  abs(number_coordinates_box1 - number_coordinates_box2) > (number_coordinates_box2 / 2.0):
+    if (abs(number_coordinates_box1 - number_coordinates_box2) > (number_coordinates_box1 / 3.0)) and  (abs(number_coordinates_box1 - number_coordinates_box2) > (number_coordinates_box2 / 3.0)):
         #print number_coordinates_box1, '1\t' , number_coordinates_box2, '2t\n'
         
         mean1 = 3000
@@ -252,17 +245,17 @@ for x in range(0, (int(number_of_boxes_ver)*int(number_of_boxes_hor) * int(numbe
  
 # Calculating the mean and the standard deviation
 mean_percentage = numpy.mean(differencemean) #calculating the mean without empty boxes
-#print mean_percentage, 'mean percentage'
-#print len(differencemean), 'len differencemean'
+print mean_percentage, 'mean percentage'
+print len(differencemean), 'len differencemean'
 std_percentage = numpy.std(differencemean) # calculating the standard deviation of the list without the empty boxes
-#print std_percentage, 'std'
+print std_percentage, 'std'
 std_percentage = std_percentage * factor
 # Calculating the left and right acceptable mean x
 left_range = float(mean_percentage) - float(std_percentage) #left range mean minus one standard deviation
 right_range = float(mean_percentage) + (float(std_percentage) )# right range mean plus one standard deviation
 
-#print 'right range', right_range
-#print 'left range', left_range
+print 'right range', right_range
+print 'left range', left_range
 if left_range > 0:
     left_range = 0
 # Collecting the values of the boxes which have to be mirrored
@@ -280,7 +273,7 @@ listindex = []
 listindexsub = []
 listindexcount = []
 listindextotalcount = []
-#print 'find wrong coordinates'
+print 'find wrong coordinates'
 for x in range(0, len(difference)):
     difference_x = "%.10f"%(difference[x])
     if counter %(int(number_of_boxes_hor)) == 0 and x != 0:
@@ -341,38 +334,37 @@ for x in range(0, len(difference)):
 
 
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a 
+print a 
 
 # finding the original faces of kopied points
-#print 'find faces with coordinates in it'
+print 'find faces with coordinates in it'
 listfacessub = []
 listfaces = []
 listpoint = []
-#print 'start find face'
+print 'start find face'
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a 
+print a 
 ix = numpy.in1d(matrix2.ravel(),listindex).reshape(matrix2.shape) # finding where the listindex is the same as the matrix
 rows, cols = numpy.where(ix) # finding index of the faces
 oi = matrix2[list(set(rows))] # extracting the rows with those faces
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a 
-#print 'end find face'
+print a 
+print 'end find face'
 
 output.close()
 
 
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a
+print a
 
 # Replacing the index values
-#outfile2 = open('final_output.ply', 'w')
-outfile2 = open(str(sys.argv[2]), 'w')
-#print 'replace the values of index for the right ones'
+outfile2 = open('final_output.ply', 'w')
+print 'replace the values of index for the right ones'
 c = []
 array_oi = numpy.array(oi)
 
 maxn = numpy.amax(array_oi)
-#print 'max', maxn
+print 'max', maxn
 palette = list(range(int(maxn)))
 palette = numpy.array(palette)
 key = numpy.array(listindex)
@@ -404,7 +396,7 @@ outc = outb[~numpy.isnan(outb).any(axis=1)] # extracting the faces with not chan
 file1.close()
 file1 = open(name_file_ply)
 g = 0
-#print 'totalcount', totalcount
+print 'totalcount', totalcount
 for d in range(0,(int(var_header) + int(var_vertex_nm) + int(var_face_nm) + 1)):
     line2 = file1.readline().strip()
     readline2 = line2.strip().split()
@@ -436,6 +428,6 @@ outfile2.close()
     
 
 a = strftime("%a, %d %b %Y %H:%M:%S", gmtime())
-#print a
+print a
 out_log.write('End time: %s'%(a))
 out_log.close()
