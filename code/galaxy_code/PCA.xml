@@ -1,17 +1,35 @@
 <tool id="PCA" name="PCA">
-  <description>Procrustes analysis</description>
+  <description>Principal Component analysis</description>
   <command interpreter="Rscript">PCA.R $input $output $output2</command>
   <inputs>
     <param name="input" type="data" format="csv" label="Procrustes csvfile" />
   </inputs>
   <outputs>
-    <data format="csv" name="output" />
-    <data format = "csv" name = "output2" />
+    <data format = "csv" name = "output2" label = "standard deviation"/>
+    <data format="csv" name="output" label = "Principal Components" />
+    
   </outputs>
 
   
   <help>
-PCA
+**Function**
+
+Principal Component analysis on procrustes coordinate of landmark data
+
+**Input file**
+
+.csv file Procrustes coordinates
+
+
+**Output**
+
+Principal Components
+
+Standard deviation
+
+**Tip**
+
+Use **Procrustes** to produce the procrustes coordinates 
   </help>
 
 </tool>

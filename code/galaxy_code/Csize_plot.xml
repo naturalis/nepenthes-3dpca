@@ -1,0 +1,38 @@
+<tool id="Csize_plot" name="Csize_plot">
+  <description>Plottool for Principal Component and Centroid size</description>
+  <command interpreter="Rscript">Csize_plot.R $input_PCA $input_Csize "$title" "$x_label" "$y_label" $x_column $names $output</command>
+  <inputs>
+    <param name="input_PCA" type="data" format="csv" label="PC" />
+    <param name="input_Csize" type="data" format="csv" label="Csize procrustes" />
+    <param name = "title" size = "30" type = "text" value = "" label = "Main Title"/>
+    <param name = "x_label" size = "30" type = "text" value = "" label = "x axis label"/>
+    <param name = "y_label" size = "30" type = "text" value = "" label = "y axis label"/>
+    <param name = "x_column" size = "2" type = "text" value = "1" label = "PC "/>
+    <param name = "names" type = "data" format = "csv" label = "sample names"/>
+  </inputs>
+  <outputs>
+    <data format="png" name="output" />
+  </outputs>
+
+  
+  <help>
+**Function**
+
+Plottool for plotting of Principal Component with Centroid size
+
+**Input file**
+
+Principal Components coordinates (csv format)
+
+centroid size of samples (csv format)
+
+**Tip**
+
+Use **PCA** to generate Principal Components
+
+Use **Procrustes** to generate centroid size
+
+
+  </help>
+
+</tool>

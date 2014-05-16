@@ -1,14 +1,14 @@
 #Procrustes tool for performing procrustes analysis on landmark data
-#developer: Mirna Baak
+#MB
 
 #commandline arguments
 args <- commandArgs(TRUE)
 #input 
 input <- args[1]
 nb_landmarks <- args[2]
-nb_dimension <- args[3]
-output <- args[4]
-outputcentroid <- args[5]
+nb_dimension <- 3
+output <- args[3]
+outputcentroid <- args[4]
 
 #package geomorph
 suppressMessages(library("geomorph"))

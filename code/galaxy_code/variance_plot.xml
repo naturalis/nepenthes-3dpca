@@ -1,0 +1,28 @@
+<tool id="Variance_plot" name="Variance_plot">
+  <description>Plottool for variance</description>
+  <command interpreter="Rscript"> variance_plot.R $input "$title" $output </command>
+  <inputs>
+    <param name="input" type="data" format="csv" label="standard deviation pca" />
+    <param name = "title" size = "30" type = "text" value = "" label = "Main Title"/>
+  </inputs>
+  <outputs>
+    <data format="png" name="output" />
+  </outputs>
+
+  
+  <help>
+**Function**
+
+Plottool for creating a barplot of variance of PCA
+
+**Input file**
+
+standard deviation (PCA)
+
+**Tip**
+
+Use **PCA** to generate standard deviation .csv file
+
+  </help>
+
+</tool>

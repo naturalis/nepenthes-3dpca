@@ -1,7 +1,7 @@
-<tool id="dtaConverter3" name="dtaConverter3">
+<tool id="DtaConverter" name="DtaConverter">
   <description>convert multiple dta files to one csv file</description>
   <command interpreter="python">
-    converter.py
+    converter.py 
     --output $output
     --output2 $output2
     
@@ -19,11 +19,12 @@
     <data format = "csv" name = "output2" label = "sample_names" />
   </outputs>
   <help>
-	**What it does**
+	**Function**
 
-	This tool can convert multiple .dta files to one .csv file with coordinates and one .csv file with names of the samples.
+	This tool can convert multiple .dta files to one .csv file with coordinates 
+	and one .csv file with names of the samples.
 
-	Press the button 'Add new Dataset' to add more .dta files. 
+	
 
 	**Input file**
 

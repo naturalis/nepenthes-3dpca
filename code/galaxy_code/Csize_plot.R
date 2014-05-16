@@ -1,5 +1,8 @@
-#The plotPCACsize tool creates a plot with a principle component and the centroid size created with procrustes analysis
-#developer: Mirna Baak
+#The Csize tool creates a plot with a Principal Component 
+#and the centroid size (created with a procrustes analysis)
+#MB
+
+
 #commandline arguments
 args <- commandArgs(TRUE)
 
@@ -16,10 +19,10 @@ output <- args[8]
 #library geomorph
 suppressMessages(library("geomorph"))
 #reading of the input files
-read <- read.csv(file <- input_PCA, header = TRUE) #principle components
+read <- read.csv(file <- input_PCA, header = TRUE) #principal components
 read2 <- read.csv(file <- input_Csize, header = TRUE) #centroid size
 read3 <- scan(file <- names, what = "", quiet = TRUE)
-pca1 <- read[,as.integer(x_column)] #principle component
+pca1 <- read[,as.integer(x_column)] #principal component
 read2 <- read2[,1] #centroid size
 
 #output

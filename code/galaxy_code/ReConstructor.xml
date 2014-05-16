@@ -1,0 +1,50 @@
+<tool id="ReConstructor" name="ReConstructor">
+  <description>Reconstruct 3D object</description>
+  <command interpreter="python"> 
+    ReConstructor.py $input $output1 $side $box_x $box_y $box_z $std_factor $colour $x_1 $x_2
+$y_1 $y_2 $z_1 $z_2 $output2 $output3
+  </command>
+  <inputs>
+    <param name="input" type="data" label="Rotated .ply file" />
+    <param name="side" type="select" label="left side is correct">
+      <option value="0" selected="true">Yes</option>
+      <option value="1" >No</option>
+    </param>   
+    <param name="box_x" size = "2" type = "integer" value = "3" label="sections x" />
+    <param name="box_y" size = "2" type = "integer" value = "5" label="sections y" />
+    <param name="box_z" size = "2" type = "integer" value = "4" label="sections z" />
+    <param name="std_factor" size = "2" type = "integer" value = "1" label="standard deviation factor" /> 
+    <param name="x_1" size = "8" type = "text" value = "standard" label="minimum x" />
+    <param name="x_2" size = "8" type = "text" value = "standard" label="maximum x" />
+    <param name="y_1" size = "8" type = "text" value = "standard" label="minimum y" />
+    <param name="y_2" size = "8" type = "text" value = "standard" label="maximum y" /> 
+    <param name="z_1" size = "8" type = "text" value = "standard" label="minimum z" />
+    <param name="z_2" size = "8" type = "text" value = "standard" label="maximum z" />
+    <param name="colour" type="select" label="colour of new surface">
+      <option value="0" selected="true">Pink</option>
+      <option value="1" >Light Blue</option>
+      <option value="2" >Green</option>
+      <option value="3" >Red</option>
+    </param>
+  </inputs>
+  
+<outputs>
+    <data  name="output1" type = "data" format = "ply" label="Reconstruct ${on_string}" />
+    <data  name="output2" type = "data" format = "txt" label="log ${on_string}" />
+    <data  name="output3" type = "data" format = "txt" label="histogram log ${on_string}" />
+  </outputs>
+  <help>
+	**Function**
+
+	Reconstruct object based on symmetry
+	
+
+	**Input file**
+
+	rotated .ply file with colorcode
+
+
+
+
+  </help>
+</tool>

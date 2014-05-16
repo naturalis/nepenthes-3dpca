@@ -1,0 +1,28 @@
+<tool id="Rotating object" name="Rotating object">
+  <description>Rotate 3D object</description>
+  <command interpreter="python"> 
+    Rotate.py $input $input2 $output
+  </command>
+  <inputs>
+    <param name="input" type="data" label="ply file" />
+    <param name="input2" type="data" label="symmetry points" />
+ 
+  </inputs>
+  <outputs>
+    <data  name="output" type = "data" format = "ply" label="Rotation on ${on_string}" />
+  </outputs>
+  <help>
+	**Function**
+
+	Rotating object stored in .ply format
+	
+
+	**Input file**
+
+	.ply file with colorcode
+
+
+
+
+  </help>
+</tool>

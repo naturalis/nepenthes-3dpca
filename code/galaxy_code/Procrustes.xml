@@ -1,19 +1,30 @@
 <tool id="Procrustes" name="Procrustes">
   <description>Procrustes analysis</description>
-  <command interpreter="Rscript">Procrustes.R $input $nb_landmarks $nb_dimension $output $outputcentroid </command>
+  <command interpreter="Rscript">Procrustes.R $input $nb_landmarks $output $outputcentroid </command>
   <inputs>
-    <param name="input" type="data" format="csv" label="Mergedcsv file" />
+    <param name="input" type="data" format="csv" label="Merged csv file" />
     <param name = "nb_landmarks" size = "5" type = "integer" value = "18" label = "number of landmarks"/>
-    <param name = "nb_dimension" size = "5" type = "integer" value = "3" label = "number of dimensions"/>
   </inputs>
   <outputs>
-    <data format="csv" name="output" label = "pca coordinates procrustes"/>
     <data format="csv" name="outputcentroid" label = "centroid size procrustes"/>
+    <data format="csv" name="output" label = "Procrustes coordinates"/>
+    
   </outputs>
 
   
   <help>
-Procrustes analysis with merged csv file and output procrustes coordinates in csv format
+**Function**
+
+Procrustes analysis for 3D object with merged csv file and output procrustes coordinates in csv format
+
+**Input file**
+
+.csv file with landmark coordinates 
+
+**Tip**
+
+Use **DtaConverter** to convert .dta to .csv
+
   </help>
 
 </tool>

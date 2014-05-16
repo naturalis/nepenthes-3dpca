@@ -1,7 +1,8 @@
 nepenthes-3dpca
 ===============
 
-Pipeline for performing principal component analysis of 3D scans of Nepenthes pitchers
+Pipeline for performing Principal Component analysis of 3D scans of Nepenthes pitchers, 
+correct Landmarks with ReMarker and reconstruct a 3D file with ReConstructor
 
 
 Tools
@@ -9,26 +10,36 @@ Tools
 /code/galaxy_code
 
 
-Converter_dta_to_csv:
-* Convert one .dta file to a .csv file 
+Converter:
+* Convert .dta files to a .csv file 
 
-Converter_multiple_dta_to_csv2:
-* convert multiple .dta files to one merged .csv file
 
 Procustes:
-* Procustes fitting to scale rotate and translate the objects. Use procrustes first for PCA.
+* Procustes fitting to scale rotate and translate the objects. Use Procrustes first for PCA.
 
 PCA:
-* Execute a principle component analyses on procrustes coordinates.
+* Execute a Principle Component analyses on Procrustes coordinates.
 
-Plottool:
+PCA plot:
 * Makes a plot with principle components on the axis. 
 
-plotPCACsize:
+Csize plot:
 * Makes a plot with a principle component and the centroid size of the object
 
-barplot:
+Variance plot:
 * Makes a barplot with variance 
+
+ReMarker: 
+* Correct landmarks (.dta) based on the symmetry 
+
+Convert ply:
+* Convert ply to ply
+
+Rotate:
+* Rotate an object based on calibration points
+
+ReConstructor:
+* Reconstruct holes and dents in a 3D object (.ply) based on symmetry
 
 
 Galaxy
@@ -42,6 +53,10 @@ Make Galaxy aware of the new tool in the tool_conf.xml file
 Python 2.7
 ----------
 Install python 2.7 to use the tools (http://www.python.org/)
+
+Numpy
+-----
+Install numpy 1.6.1 to use the tools (http://www.scipy.org/scipylib/download.html)
 
 R
 -

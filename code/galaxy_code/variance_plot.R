@@ -1,5 +1,5 @@
-#Plottool makes a graph barplot of variance
-#developer: Mirna Baak
+#Plottool makes a graph barplot of the variance
+#MB
 
 #commands extracting of commandline
 args <- commandArgs(TRUE)

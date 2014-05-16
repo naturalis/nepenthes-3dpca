@@ -1,0 +1,20 @@
+<tool id="Converter_ply" name="Converter_ply">
+  <description>converter ply file</description>
+  <command interpreter="python"> 
+    convertply.py $input $output
+  </command>
+  <inputs>
+    <param name="input" type="data" label="ply file" />
+
+  </inputs>
+  <outputs>
+    <data  name="output" type = "data" format = "ply" label="converting${on_string}" />
+  </outputs>
+  <help>
+	**Function**
+
+	Extract enters of header in ply file
+	
+
+  </help>
+</tool>
