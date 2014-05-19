@@ -13,7 +13,6 @@ import sys
 def main():
     name_file_ply = sys.argv[1] # name of the ply file
     name_output = sys.argv[2] # name of the output file
-    return name_file_ply, name_output
 
     # open the input and output file
     file_ply = open(name_file_ply)
@@ -25,9 +24,9 @@ def main():
     file_ply = open(name_file_ply) # re-open the file
     remove_empty_lines(lines, name_file_ply, output)
 
-# Function remoce empty line
+# Function remove empty line
 def remove_empty_lines(lines,name_file_ply, output):
-    
+    file_ply = open(name_file_ply)
     for x in range(0,len(lines)):
         line = file_ply.readline().strip()
         line2 = line.strip().split()
