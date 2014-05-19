@@ -6,8 +6,8 @@
 from optparse import OptionParser
 from os.path import basename
 
-# Function for merging all files together in .csv format 
-# and extracting the headers of the file.
+# Function for merging all files in .csv format 
+# and extracting the headers of the files.
 def main():
     # extracting the users input
     parser = OptionParser()

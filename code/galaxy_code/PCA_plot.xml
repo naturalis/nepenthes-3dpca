@@ -30,7 +30,7 @@ sample names (csv format)
 
 Use **PCA** to generate Principal Components
 
-Use the sample names of **dtaConverter** or create your own 'sample name file' in .csv format
+Use the sample names of **DtaConverter** or create your own 'sample name file' in .csv format
   </help>
 
 </tool>
